@@ -63,6 +63,7 @@ export default (state = initialState, action) => {
 
           case ADD_ORDER:  
             return initialState;
+            
     }
     return state;
 
