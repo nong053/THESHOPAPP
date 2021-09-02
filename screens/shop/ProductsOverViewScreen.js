@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, Platform, Text,Button } from 'react-native';
+import { FlatList, Platform, Text, Button } from 'react-native';
 
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -14,6 +14,14 @@ const ProductsOverViewScreen = props => {
 
     const dispatch = useDispatch();
 
+    const selectItemHandler = (id, title) => {
+        props.navigation.navigate('ProductDetail'
+            , {
+                productId: id,
+                productTitle: title
+            });
+    }
+
     return (<FlatList
         data={products}
         keyExtractor={item => item.id}
@@ -22,34 +30,39 @@ const ProductsOverViewScreen = props => {
                 image={itemData.item.imageUrl}
                 title={itemData.item.title}
                 price={itemData.item.price}
-                onViewDetail={() => {
-                    props.navigation.navigate('ProductDetail'
-                        , {
-                            productId: itemData.item.id,
-                            productTitle: itemData.item.title
-                        });
+                onSelect={() => {
+                    selectItemHandler(itemData.item.id, itemData.item.title);
                 }}
-                onAddToCart={() => {
+                
+            >
+                <Button
+                    color={Color.primary}
+                    title="View Details"
+                    onPress={() => {
+                        selectItemHandler(itemData.item.id, itemData.item.title);
+                    }} />
+                <Button
+                    color={Color.primary}
+                    title="To Cart"
+                    onPress={()=>{
+                        dispatch(cartActions.addToCart(itemData.item));
+                    }} />
 
-                    dispatch(cartActions.addToCart(itemData.item));
-                    console.log("add to cart");
-                }}
-
-            />}
+            </ProductItem>}
     ></FlatList>);
 }
 ProductsOverViewScreen.navigationOptions = navData => {
     return {
         headerTitle: "All Products",
-        headerLeft:()=>(
+        headerLeft: () => (
             <Button
                 onPress={() => {
-                   navData.navigation.toggleDrawer();
+                    navData.navigation.toggleDrawer();
                 }}
                 title="Menu"
                 color={Color.primary}
-               
-               
+
+
 
             />
         ),
@@ -60,12 +73,12 @@ ProductsOverViewScreen.navigationOptions = navData => {
                 }}
                 title="Cart"
                 color={Color.primary}
-               
+
                 icon={{
                     name: "md-cart",
                     size: 15,
                     color: "white"
-                  }}
+                }}
 
             />
 

@@ -5,7 +5,6 @@ import {
     Text,
     Image,
     StyleSheet,
-    Button,
     TouchableOpacity,
     TouchableNativeFeedback,
     Platform
@@ -22,7 +21,7 @@ const ProductItem = props => {
     return (
         <View style={styles.product}>
             <View style={styles.touchable} >
-                <TouchableCmp onPress={props.onViewDetail} useForeground>
+                <TouchableCmp onPress={props.onSelect} useForeground>
                     <View>
                         <Image style={styles.image} source={{ uri: props.image }} />
                         <View style={styles.details}>
@@ -31,8 +30,7 @@ const ProductItem = props => {
                         </View>
 
                         <View style={styles.actions}>
-                            <Button color={Color.primary} title="View Details" onPress={props.onViewDetail} />
-                            <Button color={Color.primary} title="To Cart" onPress={props.onAddToCart} />
+                           {props.children}
                         </View>
                     </View>
                 </TouchableCmp>
@@ -73,25 +71,25 @@ const styles = StyleSheet.create({
     details: {
 
         alignItems: "center",
-        height: '15%',
+        height: '17%',
         padding: 10
 
     },
     title: {
         fontSize: 18,
         marginVertical: 2,
-        fontFamily:"open-sans-bold"
+        fontFamily: "open-sans-bold"
     },
     price: {
         fontSize: 14,
         color: '#888',
-        fontFamily:"open-sans"
+        fontFamily: "open-sans"
     },
     actions: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        height: '25%',
+        height: '23%',
         paddingHorizontal: 20
     }
 
