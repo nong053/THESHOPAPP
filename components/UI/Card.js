@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { exp } from 'react-native/Libraries/Animated/src/Easing';
+
 
 
 const Card =  props =>{
