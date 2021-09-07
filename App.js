@@ -4,8 +4,10 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import AppLoading from 'expo-app-loading';
 
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
+
+import ReduxThunk from 'redux-thunk';
 
 import productsReducer from './store/reducers/products';
 import cartReducer from './store/reducers/cart';
@@ -14,7 +16,7 @@ import orderReducer from './store/reducers/order';
 import ShopNavigator from './navigation/ShopNavigator';
 import * as Font from 'expo-font';
 
-import {composeWithDevTools} from 'redux-devtools-extension';
+// import {composeWithDevTools} from 'redux-devtools-extension';
 
 const rootReducer = combineReducers({
   products: productsReducer,
@@ -23,7 +25,8 @@ const rootReducer = combineReducers({
 });
 
 
-const store = createStore(rootReducer,composeWithDevTools());
+// const store = createStore(rootReducer,composeWithDevTools());
+const store = createStore(rootReducer,applyMiddleware(ReduxThunk));
 
 const fetchFont = () => {
   return Font.loadAsync({
