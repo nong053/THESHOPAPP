@@ -1,5 +1,15 @@
-import React, { useEffect, useCallback, useReducer } from 'react';
-import { Platform, Alert, Button, Text, StyleSheet, View, TextInput, ScrollView } from 'react-native';
+import React, { useState, useEffect, useCallback, useReducer } from 'react';
+import {
+    Platform,
+    Alert,
+    Button,
+    Text,
+    StyleSheet,
+    View,
+    TextInput,
+    ScrollView,
+    ActivityIndicator
+} from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Color from '../../constants/Color';
 
@@ -9,30 +19,33 @@ const FROM_INPUT_UPDATE = 'FORM_IN_UPDATE'
 
 const formReducer = (state, action) => {
     if (action.type === FROM_INPUT_UPDATE) {
-        const updaetdValues ={
+        const updaetdValues = {
             ...state.inputValues,
-            [action.input]:action.value
+            [action.input]: action.value
         };
-        const updaetdValidities={
+        const updaetdValidities = {
             ...state.inputValidities,
-            [action.input]:action.isValid
+            [action.input]: action.isValid
         };
 
-        let updatedFormIsValid=true;
-        for(const key in updaetdValidities){
+        let updatedFormIsValid = true;
+        for (const key in updaetdValidities) {
             updatedFormIsValid = updatedFormIsValid && updaetdValidities[key];
         }
 
         return {
-            formIsValid:updatedFormIsValid,
-            inputValidities:updaetdValidities,
-            inputValues:updaetdValues
+            formIsValid: updatedFormIsValid,
+            inputValidities: updaetdValidities,
+            inputValues: updaetdValues
         }
     }
     return state;
 };
 
 const EditProductScreen = props => {
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const prodId = props.navigation.getParam('productId');
     const editedProduct = useSelector(state =>
@@ -65,30 +78,49 @@ const EditProductScreen = props => {
 
 
 
-    const submitHandler = useCallback(() => {
+    useEffect(() => {
+        console.log(error);
+        if (error) {
+          Alert.alert('An error occurred!', 'Something with wrong', [{ text: 'Okay' }]);
+        }
+      }, [error]);
+
+
+    const submitHandler = useCallback(async () => {
 
         if (!formState.formIsValid) {
             Alert.alert('Wrong input!', 'Please check the errors in the from.', [{ text: "Okay" }])
             return;
         }
+        setError(null);
+        setIsLoading(true);
+        try {
+            if (editedProduct) {
 
-        if (editedProduct) {
-            dispatch(productsAction.updateProduct(
-                prodId,
-                formState.inputValues.title,
-                formState.inputValues.description,
-                formState.inputValues.imageUrl
-            ));
-        } else {
-            dispatch(productsAction.createProduct(
+                await dispatch(productsAction.updateProduct(
+                    prodId,
+                    formState.inputValues.title,
+                    formState.inputValues.description,
+                    formState.inputValues.imageUrl
+                ));
+            } else {
+                await dispatch(productsAction.createProduct(
 
-                formState.inputValues.title,
-                formState.inputValues.description,
-                formState.inputValues.imageUrl,
-                +formState.inputValues.price
-            ));
+                    formState.inputValues.title,
+                    formState.inputValues.description,
+                    formState.inputValues.imageUrl,
+                    +formState.inputValues.price
+                ));
+            }
+            props.navigation.goBack();
+        } catch (err) {
+           
+            setError(err);
         }
-        props.navigation.goBack();
+
+
+        setIsLoading(false);
+
     }, [dispatch, prodId, formState]);
 
     useEffect(() => {
@@ -98,16 +130,22 @@ const EditProductScreen = props => {
     const textChangeHandler = (inputIdentifier, text) => {
         let isValid = false;
         if (text.trim().length > 0) {
-            isValid=true;
-        } 
+            isValid = true;
+        }
         dispatchFormState({
-            type:FROM_INPUT_UPDATE,
-            value:text,
-            isValid:isValid,
-            input:inputIdentifier
+            type: FROM_INPUT_UPDATE,
+            value: text,
+            isValid: isValid,
+            input: inputIdentifier
         })
 
     }
+
+    if (isLoading) {
+        return <View style={styles.centered}><ActivityIndicator size='large' /></View>
+    }
+
+
     return (
         <ScrollView>
             <View style={styles.form}>
@@ -115,7 +153,7 @@ const EditProductScreen = props => {
                     <Text style={styles.label} >Title</Text>
                     <TextInput style={styles.input}
                         value={formState.inputValues.title}
-                        onChangeText={textChangeHandler.bind(this,'title')}
+                        onChangeText={textChangeHandler.bind(this, 'title')}
                         keyboardType='default'
                         autoCapitalize='sentences'
                         autoCorrect
@@ -133,7 +171,7 @@ const EditProductScreen = props => {
                     <Text style={styles.label} >Image URL</Text>
                     <TextInput style={styles.input}
                         value={formState.inputValues.imageUrl}
-                        onChangeText={textChangeHandler.bind(this,'imageUrl')}
+                        onChangeText={textChangeHandler.bind(this, 'imageUrl')}
                         keyboardType='default'
                     />
 
@@ -142,7 +180,7 @@ const EditProductScreen = props => {
                     <Text style={styles.label} >Price</Text>
                     <TextInput style={styles.input}
                         value={formState.inputValues.price}
-                        onChangeText={textChangeHandler.bind(this,'price')}
+                        onChangeText={textChangeHandler.bind(this, 'price')}
                         keyboardType='decimal-pad'
                     />
 
@@ -152,7 +190,7 @@ const EditProductScreen = props => {
                     <Text style={styles.label} >Description</Text>
                     <TextInput style={styles.input}
                         value={formState.inputValues.description}
-                        onChangeText={textChangeHandler.bind(this,'description')} />
+                        onChangeText={textChangeHandler.bind(this, 'description')} />
 
                 </View>
             </View>
@@ -197,6 +235,11 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
         borderBottomColor: '#CCC',
         borderBottomWidth: 1
+    },
+    sentered: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 });
 export default EditProductScreen;

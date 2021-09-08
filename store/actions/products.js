@@ -15,8 +15,8 @@ export const fetchProducts = () => {
                 'https://rn-complete-guide-3a47d-default-rtdb.asia-southeast1.firebasedatabase.app/products.json'
             );
 
-            if(!response.ok){
-             throw new Error('Something wen wrong!')   
+            if (!response.ok) {
+                throw new Error('Something wen wrong!')
             }
 
             const resData = await response.json();
@@ -37,18 +37,32 @@ export const fetchProducts = () => {
 
             console.log(loadedProducts);
             dispatch({ type: SET_PRODUCTS, products: loadedProducts });
-        }catch(err){
+        } catch (err) {
             //send to custom analytics server
             throw err;
         }
-       
+
     }
 }
 
 export const deleteProduct = productId => {
-    return {
+    return async dispatch => {
 
-        type: DELETE_PRODUCT, pid: productId
+       const response = await fetch(
+            `https://rn-complete-guide-3a47d-default-rtdb.asia-southeast1.firebasedatabase.app/products/${productId}.json`,
+             {
+            method: 'DELETE'
+           
+        });
+
+        if(!response.ok){
+            throw new Error('Something with wrong.');
+        }
+
+        dispatch({
+
+            type: DELETE_PRODUCT, pid: productId
+        });
     }
 }
 
@@ -91,16 +105,37 @@ export const createProduct = (title, description, imageUrl, price) => {
 
 
 export const updateProduct = (id, title, description, imageUrl) => {
-    return {
+    return async dispatch => {
 
-        type: UPDATE_PRODUCT,
-        pid: id,
-        productData: {
-            title,
-            description,
-            imageUrl,
+       const response= await fetch(
+            `https://rn-complete-guide-3a47d-default-rtdb.asia-southeast1.firebasedatabase.app/products/${id}.json`,
+            {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title,
+                    description,
+                    imageUrl
+                })
+            });
 
-        },
+
+            if(!response.ok){
+                throw new Error('Something with wrong.');
+            }
+
+        dispatch({
+            type: UPDATE_PRODUCT,
+            pid: id,
+            productData: {
+                title,
+                description,
+                imageUrl,
+
+            },
+        })
     };
 };
 
