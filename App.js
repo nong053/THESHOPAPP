@@ -13,6 +13,7 @@ import productsReducer from './store/reducers/products';
 import cartReducer from './store/reducers/cart';
 import orderReducer from './store/reducers/order';
 
+import authReducder from './store/reducers/auth';
 import ShopNavigator from './navigation/ShopNavigator';
 import * as Font from 'expo-font';
 
@@ -21,7 +22,8 @@ import * as Font from 'expo-font';
 const rootReducer = combineReducers({
   products: productsReducer,
   cart:cartReducer,
-  orders:orderReducer
+  orders:orderReducer,
+  auth:authReducder
 });
 
 
