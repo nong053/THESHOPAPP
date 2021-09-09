@@ -2,12 +2,14 @@ export const ADD_ORDER = 'ADD_ORDER';
 export const SET_ORDERS = 'SET_ORDERS';
 import order from '../../models/order';
 
-export const fetchOrders = () =>{
-    return async dispatch=>{
+export const fetchOrders = () => {
+    return async (dispatch, getState) => {
+        const token = getState().auth.token;
+        const userId = getState().auth.userId;
         try {
             // any async code you want!
             const response = await fetch(
-                'https://rn-complete-guide-3a47d-default-rtdb.asia-southeast1.firebasedatabase.app/orders/u1.json'
+                `https://rn-complete-guide-3a47d-default-rtdb.asia-southeast1.firebasedatabase.app/orders/${userId}.json?auth=${token}`
             );
 
             if (!response.ok) {
@@ -22,27 +24,30 @@ export const fetchOrders = () =>{
                 loadedOrders.push(
                     new order(
                         key,
-                         resData[key].cartItems,
-                         resData[key].totalAmount,
-                         new Date(resData[key].date)
-                         )
+                        resData[key].cartItems,
+                        resData[key].totalAmount,
+                        new Date(resData[key].date)
+                    )
                 );
             }
 
 
-            dispatch({type:SET_ORDERS,orders:loadedOrders});
+            dispatch({ type: SET_ORDERS, orders: loadedOrders });
         } catch (err) {
+            console.log(err);
             //send to custom analytics server
             throw err;
         }
 
-        
+
     }
 }
 export const addOrder = (cartItems, totalAmount) => {
-    return async dispatch => {
+    return async (dispatch, getState) => {
+        const token = getState().auth.token;
+        const userId = getState().auth.userId;
         const date = new Date();
-        const response = await fetch('https://rn-complete-guide-3a47d-default-rtdb.asia-southeast1.firebasedatabase.app/orders/u1.json', {
+        const response = await fetch(`https://rn-complete-guide-3a47d-default-rtdb.asia-southeast1.firebasedatabase.app/orders/${userId}.json?auth=${token}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -59,6 +64,7 @@ export const addOrder = (cartItems, totalAmount) => {
         }
 
         const resData = await response.json();
+        console.log("addOrder="+resData);
 
         dispatch({
             type: ADD_ORDER,
@@ -66,7 +72,7 @@ export const addOrder = (cartItems, totalAmount) => {
                 id: resData.name,
                 items: cartItems,
                 amount: totalAmount,
-                date:date
+                date: date
             }
         });
 

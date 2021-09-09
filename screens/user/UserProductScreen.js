@@ -1,7 +1,7 @@
 import React from 'react';
-import {Alert, FlatList, View, Text, Button, StyleSheet } from 'react-native';
+import { Alert, FlatList, View, Text, Button, StyleSheet } from 'react-native';
 import ProductItem from '../../components/shop/ProductItem'
-import { useSelector,useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Color from '../../constants/Color';
 import * as productsActions from '../../store/actions/products'
 
@@ -11,7 +11,7 @@ import * as productsActions from '../../store/actions/products'
 const UserProductScreen = props => {
     const userProducts = useSelector(state => state.products.userProducts)
     const dispatch = useDispatch();
-    
+
 
     const deleteHandler = (id) => {
         Alert.alert('Are you sure?', 'Do you really want to delte this item?', [
@@ -25,10 +25,19 @@ const UserProductScreen = props => {
             }
         ]);
     }
-    
-    const editProductHandler = (id) =>{
-        props.navigation.navigate('EditProduct',{productId:id});
+
+    const editProductHandler = (id) => {
+        props.navigation.navigate('EditProduct', { productId: id });
     };
+
+
+    if (userProducts.lenth === 0) {
+        return (
+            <View style={styles.centered}>
+                <Text>No Product found, maybe start creating some?</Text>
+            </View>
+        )
+    }
 
     return (
         <FlatList
@@ -41,7 +50,7 @@ const UserProductScreen = props => {
                     title={itemData.item.title}
                     price={itemData.item.price}
                     onSelect={() => {
-                      
+
                     }}
                 >
 
@@ -63,7 +72,7 @@ const UserProductScreen = props => {
 }
 
 UserProductScreen.navigationOptions = navData => {
-
+  
     return {
         headerTitle: "Your Products",
         headerLeft: () => (
@@ -81,7 +90,7 @@ UserProductScreen.navigationOptions = navData => {
         headerRight: () => (
             <Button
                 onPress={() => {
-                   navData.navigation.navigate('EditProduct');
+                    navData.navigation.navigate('EditProduct');
                 }}
                 title="Add"
                 color={Color.primary}
@@ -99,6 +108,11 @@ UserProductScreen.navigationOptions = navData => {
     }
 }
 const styles = StyleSheet.create({
-
+    centered:{
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center'
+        
+    }
 });
 export default UserProductScreen;
