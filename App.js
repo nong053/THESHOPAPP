@@ -14,7 +14,8 @@ import cartReducer from './store/reducers/cart';
 import orderReducer from './store/reducers/order';
 
 import authReducder from './store/reducers/auth';
-import ShopNavigator from './navigation/ShopNavigator';
+//import ShopNavigator from './navigation/ShopNavigator';
+import NavigationContainer from './navigation/NavigationContainer';
 import * as Font from 'expo-font';
 
 // import {composeWithDevTools} from 'redux-devtools-extension';
@@ -56,7 +57,7 @@ export default function App() {
   }
   return (
     <Provider store={store}>
-      <ShopNavigator />
+      <NavigationContainer />
     </Provider>
   );
 }
