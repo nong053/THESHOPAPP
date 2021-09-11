@@ -20,7 +20,7 @@ const StartupScreen = props => {
                 props.navigation.navigate('Auth');
                 return;
             }
-            const fransFormedData = JSON.parse(userData);
+            const transformedData = JSON.parse(userData);
             const { token, userId, expiryDate } = transformedData;
 
             const expirationDate = new Date(expiryDate);
@@ -30,10 +30,10 @@ const StartupScreen = props => {
                 return;
             }
 
-            const exprirationTime = expirationDate.getTime() - new Date().getItem();
+            const exprirationTime = expirationDate.getTime() - new Date().getTime();
             
             props.navigation.navigate('Shop');
-            dispatch(authActions.authenticate(userId,token));
+            dispatch(authActions.authenticate(userId,token,exprirationTime));
         }
         tryLogin();
     }, [dispatch]);
@@ -47,8 +47,9 @@ const StartupScreen = props => {
 const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        justifyContentl: 'center',
+        justifyContent: 'center',
         alignItems: 'center'
 
     }
 });
+export default StartupScreen;

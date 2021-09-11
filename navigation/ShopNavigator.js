@@ -12,9 +12,11 @@ import OrdersScreen from '../screens/shop/OrdersScreen';
 import UserProductScreen from '../screens/user/UserProductScreen';
 import EditProductScreen from '../screens/user/EditProductScreen';
 import AuthScreen from '../screens/user/AuthScreen';
+import StartupScreen from '../screens/StartupScreen';
 import { Ionicons } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
 import Color from '../constants/Color';
+
 import * as authAction from '../store/actions/auth';
 
 
@@ -98,7 +100,7 @@ const ShopNavigator = createDrawerNavigator({
                 <DrawerItems  {...props}/>
                 <Button title="Logout" color={Color.primary} onPress={()=>{
                     dispatch(authAction.logout());
-                    //props.navigation.navigate('Auth');
+                    props.navigation.navigate('Auth');
                 }}/>
                 </SafeAreaView>
             </View>
@@ -113,6 +115,7 @@ const AuthNavigator = createStackNavigator({
 });
 
 const MainNavigator = createSwitchNavigator({
+    Startup: StartupScreen,
     Auth: AuthNavigator,
     Shop: ShopNavigator
 });

@@ -54,7 +54,7 @@ export const signup = (email, password) => {
             resData.idToken,
             parseInt(resData.expiresIn) * 1000));
 
-        const expirationDate = new Date(Date().getTime() + parseInt(resData.expiresIn) * 1000);
+        const expirationDate = new Date(new Date().getTime() + parseInt(resData.expiresIn) * 1000);
         saveDataToStorage(resData.idToken, resData.localId, expirationDate);
 
     };
@@ -110,12 +110,15 @@ export const logout = () => {
     AsyncStorage.removeItem('userData');
     return { type: LOGOUT };
 
+    //console.log(AsyncStorage.getItem('userData'));
+
 }
 
 const clearLogoutTimer = () => {
     if (timer) {
         clearTimeout(timer);
     }
+    console.log("timer is="+timer);
 
 }
 const setLogoutTimer = expirationTime => {
